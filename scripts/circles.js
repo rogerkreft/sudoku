@@ -3,32 +3,38 @@ window.onload = initCircles;
 
 function initCircles() {
     var i = 1
-    var main = document.querySelector('main')
+    var mainStyle = getComputedStyle(document.querySelector('main'))
     while (true) {
         var circle = document.querySelector('.circle:nth-of-type(' + i++ + ')')
         if (circle == null) {
             break
         }
-        initCircle(main, circle)
+        animateCircle(circle, mainStyle)
     }
 }
 
-function initCircle(main, circle) {
-    var mainStyle = getComputedStyle(main)
-    var circleStyle = getComputedStyle(circle)
+function animateCircle(circle, mainStyle) {
+    var duration = Math.random() * 10 * 1000
+    setTimeout(function () {
+        var top = getRandomTop(circle, mainStyle)
+        var left = getRandomLeft(circle, mainStyle)
+        placeCircle(circle, top, left)
+        animateCircle(circle, mainStyle);
+    }, duration);
+}
 
+function getRandomTop(circle, mainStyle) {
+    var circleStyle = getComputedStyle(circle)
     var height = getPart(circleStyle.height, mainStyle.height) * 100
     var maxTop = 100 - height;
-    var top = Math.random() * maxTop
-    circle.style.setProperty('top', top + 'vh')
+    return Math.random() * maxTop
+}
 
+function getRandomLeft(circle, mainStyle) {
+    var circleStyle = getComputedStyle(circle)
     var width = getPart(circleStyle.width, mainStyle.width) * 100
-    var maxLeft = 100 - width
-    var left = Math.random() * maxLeft
-    circle.style.setProperty('left', left + 'vw')
-
-    console.log('top:' + top + ' , left:' + left)
-    return true
+    var maxLeft = 100 - width;
+    return Math.random() * maxLeft
 }
 
 function getPart(counter, denominator) {
@@ -38,4 +44,9 @@ function getPart(counter, denominator) {
 function toFloat(string) {
     var f = string.replace('px', '')
     return f
+}
+
+function placeCircle(circle, top, left) {
+    circle.style.setProperty('top', top + 'vh')
+    circle.style.setProperty('left', left + 'vw')
 }
