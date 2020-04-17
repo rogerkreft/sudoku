@@ -1,3 +1,7 @@
+html {
+    font-size: 400%;
+}
+
 main {
     background-image: url("/img/background-1200p.jpg");
 }

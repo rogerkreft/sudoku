@@ -2,7 +2,10 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    color: white;
+}
+
+html {
+    font-size: 200%;
 }
 
 main {
@@ -20,8 +23,8 @@ main {
 
 .circle {
     position: fixed;
-    height: 8vw;
-    width: 8vw;
+    height: 15vh;
+    width: 15vh;
     border-radius: 50%;
     background-color: white;
     opacity: 0.5;
@@ -29,4 +32,30 @@ main {
 
 .sudoku {
     z-index: 1;
+    background-color: black;
+    border: 0.1rem solid black;
+    width: 10rem;
+    height: 10rem;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.sudoku>* {
+    z-index: inherit;
+    height: 3rem;
+    width: 3rem;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.sudoku>*>input {
+    z-index: inherit;
+    height: 1rem;
+    width: 1rem;
+    font-size: inherit;
+    text-align: center;
 }

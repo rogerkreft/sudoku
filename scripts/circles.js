@@ -1,15 +1,7 @@
-
-window.onload = init
-
 var mainStyle
 
-function init() {
-    var main = document.querySelector('main')
-    mainStyle = getComputedStyle(main)
-    initCircles()
-}
-
 function initCircles() {
+    mainStyle = getComputedStyle(document.querySelector('main'))
     var i = 1
     while (true) {
         var circle = document.querySelector('.circle:nth-of-type(' + i++ + ')')
@@ -25,10 +17,14 @@ function initCircles() {
     }
 }
 
+function getAnimationName(circle) {
+    return 'move' + circle.getAttribute('number')
+}
+
 function animateCircle(circle) {
     placeCircle(circle)
     var animationStyle = getAnimationStyle(circle)
-    animationStyle.data = getKeyframes(circle)
+    animationStyle.textContent = getKeyframes(circle)
     var duration = Math.random() * 60 * 1000
     circle.style.setProperty('animation-duration', duration + 'ms')
     setTimeout(function () {
@@ -58,12 +54,11 @@ function getRandomLeft(circle) {
 }
 
 function getPart(counter, denominator) {
-    return toFloat(counter) / toFloat(denominator)
+    return toNumber(counter) / toNumber(denominator)
 }
 
-function toFloat(string) {
-    var f = string.replace('px', '')
-    return f
+function toNumber(s) {
+    return +s.replace('px', '')
 }
 
 function getAnimationStyle(circle) {
@@ -88,8 +83,4 @@ function getKeyframes(circle) {
     kf += '  to { top: ' + getRandomTop(circle) + '; left: ' + getRandomLeft(circle) + '; }\n'
     kf += '}\n'
     return kf
-}
-
-function getAnimationName(circle) {
-    return 'move' + circle.getAttribute('number')
 }
