@@ -26,3 +26,7 @@ main {
     background-color: white;
     opacity: 0.5;
 }
+
+.sudoku {
+    z-index: 1;
+}
