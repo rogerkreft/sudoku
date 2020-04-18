@@ -1,11 +1,21 @@
+html {
+    font-size: 200%;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-size: inherit;
 }
 
-html {
-    font-size: 200%;
+.circle {
+    position: fixed;
+    height: 15vh;
+    width: 15vh;
+    border-radius: 50%;
+    background-color: white;
+    opacity: 0.5;
 }
 
 main {
@@ -16,18 +26,9 @@ main {
     background-repeat: no-repeat;
     background-size: cover;
     display: flex;
-    flex: row wrap;
+    flex-flow: column nowrap;
     justify-content: center;
     align-items: center;
-}
-
-.circle {
-    position: fixed;
-    height: 15vh;
-    width: 15vh;
-    border-radius: 50%;
-    background-color: white;
-    opacity: 0.5;
 }
 
 .sudoku {
@@ -56,6 +57,19 @@ main {
     z-index: inherit;
     height: 1rem;
     width: 1rem;
-    font-size: inherit;
     text-align: center;
+}
+
+.buttons {
+    z-index: 1;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.buttons>button {
+    font-size: 0.3rem;
+    margin: 0.1rem;
+    padding: 0.1rem;
 }
