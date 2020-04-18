@@ -15,6 +15,9 @@ class Field {
     }
 
     getSquare(index) {
+        if (!this.squares.has(index)) {
+            this.squares.set(index, new Array())
+        }
         return this.squares.get(index)
     }
 
@@ -47,11 +50,11 @@ class Field {
     }
 
     isSolved() {
-        const emptyFields = getAllEmpty()
+        const emptyFields = this.getAllEmpty()
         if (emptyFields.length > 0) {
             return false
         }
-        const mistakes = getMistakes()
+        const mistakes = this.getMistakes()
         if (mistakes.length > 0) {
             return false
         }
@@ -125,6 +128,30 @@ class Field {
         return null
     }
 
+    serialize() {
+        let serializedSquares = new Map()
+        for (let i = 0; i < 9; i++) {
+            let serializedSquare = new Array()
+            const square = this.getSquare(i)
+            for (let j = 0; j < square.length; j++) {
+                serializedSquare[j] = square[j].value
+            }
+            serializedSquares.set(i, serializedSquare)
+        }
+        return serializedSquares
+    }
+
+    deserialize(serializedSquares) {
+        for (let i = 0; i < 9; i++) {
+            let square = this.getSquare(i)
+            const serializedSquare = serializedSquares.get(i)
+            for (let j = 0; j < serializedSquare.length; j++) {
+                let choice = new KeyPressEvent(square[j], serializedSquare[j])
+                choice.execute()
+            }
+        }
+    }
+
     print() {
         console.log('printing ...')
         for (let i = 0; i < 9; i++) {
@@ -136,4 +163,7 @@ class Field {
             }
         }
     }
+
 }
+
+var field = new Field()

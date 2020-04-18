@@ -1,9 +1,3 @@
-
-const VALID = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
-
-var field = new Field()
-var inputs = new Inputs()
-
 function initSudoku() {
     try {
         var squares = document.querySelectorAll('.sudoku>.square')
@@ -19,26 +13,6 @@ function initSudoku() {
     } catch (err) {
         console.log('ERROR initializing sudoku:', err)
     }
-}
-
-function validateInput(e, f) {
-    if (VALID.includes(e.key)) {
-        f(e)
-    } else {
-        e.preventDefault()
-    }
-}
-
-function keyPressed(e) {
-    const field = e.target
-    const oldValue = field.value
-    const newValue = e.key
-    inputs.track(field, oldValue, newValue)
-    field.value = ''
-}
-
-function keyUp(e) {
-    inputs.print()
 }
 
 function check() {
@@ -58,19 +32,22 @@ function check() {
 }
 
 function undo() {
-    this.inputs.undo()
+    inputs.undo()
+}
+
+function restart() {
+    while (inputs.hasStoredInputs()) {
+        this.inputs.undo()
+    }
 }
 
 function solve() {
-    if (field.isSolved()) {
-        return true
-    }
-    const emptyFields = field.getAllEmpty()
-    if (emptyFields.length == 0) {
-        check()
-        return false
-    }
-    for (let i = 0; i < emptyFields.length; i++) {
+    let solver = new Worker('/scripts/solver.js')
+    solver.onmessage = onmessage
+    solver.postMessage(field.serialize())
+}
 
-    }
+onmessage = function (e) {
+    console.log('Message received from worker script:', e.data)
+    field.deserialize(e.data)
 }
