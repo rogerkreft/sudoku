@@ -51,15 +51,15 @@ class Field {
         for (let i = 0; i < 9; i++) {
             const square = this.getSquare(i)
             if (!this.isValid(square)) {
-                mistakes.push('square #' + i + ' is invalid!')
+                mistakes.push('square #' + (i + 1) + ' is invalid!')
             }
             const row = this.getRow(i)
             if (!this.isValid(row)) {
-                mistakes.push('row #' + i + ' is invalid!')
+                mistakes.push('row #' + (i + 1) + ' is invalid!')
             }
             const column = this.getColumn(i)
             if (!this.isValid(column)) {
-                mistakes.push('column #' + i + ' is invalid!')
+                mistakes.push('column #' + (i + 1) + ' is invalid!')
             }
         }
         return mistakes

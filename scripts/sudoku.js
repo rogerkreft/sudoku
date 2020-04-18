@@ -34,8 +34,16 @@ function keyPressed(e) {
 }
 
 function keyUp(e) {
+    console.log(e)
+}
+
+function check() {
     const mistakes = field.getMistakes()
-    for (let i = 0; i < mistakes.length; i++) {
-        console.log(mistakes[i])
+    if (mistakes.length > 0) {
+        let msg = 'The sudoku is invalid because:\n'
+        for (let i = 0; i < mistakes.length; i++) {
+            msg += '\t - ' + mistakes[i] + '\n'
+        }
+        alert(msg)
     }
 }
