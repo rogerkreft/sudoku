@@ -1,20 +1,23 @@
 var mainStyle
 
 function initCircles() {
-    console.log('initializing circles ...')
-    mainStyle = getComputedStyle(document.querySelector('main'))
-    var i = 1
-    while (true) {
-        var circle = document.querySelector('.circle:nth-of-type(' + i++ + ')')
-        if (circle == null) {
-            break
+    try {
+        mainStyle = getComputedStyle(document.querySelector('main'))
+        var i = 1
+        while (true) {
+            var circle = document.querySelector('.circle:nth-of-type(' + i++ + ')')
+            if (circle == null) {
+                break
+            }
+            circle.setAttribute('number', i)
+            var circleStyle = circle.style
+            circleStyle.setProperty('animation-name', getAnimationName(circle))
+            circleStyle.setProperty('animation-timing-function', 'linear')
+            circleStyle.setProperty('animation-iteration-count', 'infinite')
+            animateCircle(circle)
         }
-        circle.setAttribute('number', i)
-        var circleStyle = circle.style
-        circleStyle.setProperty('animation-name', getAnimationName(circle))
-        circleStyle.setProperty('animation-timing-function', 'linear')
-        circleStyle.setProperty('animation-iteration-count', 'infinite')
-        animateCircle(circle)
+    } catch (err) {
+        console.log('ERROR initializing circles:', err)
     }
 }
 
