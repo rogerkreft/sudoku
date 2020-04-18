@@ -1,19 +1,17 @@
 
-var squares = new Map()
-var rows = new Map()
-var columns = new Map()
+var field = new Field()
 
 function initSudoku() {
-    var divs = document.querySelectorAll('.sudoku>*')
-    for (i = 0; i < divs.length; i++) {
-        var div = divs[i]
-        var inputs = div.getElementsByTagName('input')
-        for (j = 0; j < inputs.length; j++) {
+    console.log('initializing sudoku ...')
+    var squares = document.querySelectorAll('.sudoku>.square')
+    for (let i = 0; i < squares.length; i++) {
+        var inputs = squares[i].getElementsByTagName('input')
+        for (let j = 0; j < inputs.length; j++) {
             var input = inputs[j]
             input.addEventListener('keypress', e => validateInput(e, keyPressed))
             input.addEventListener('keyup', e => validateInput(e, keyUp))
-            insert(i, j, input)
         }
+        field.insertSquare(i, inputs)
     }
 }
 
@@ -32,17 +30,5 @@ function keyPressed(e) {
 }
 
 function keyUp(e) {
-    console.log(squares)
-}
-
-function insert(i, j, input) {
-    insertSquare(i, input)
-}
-
-function insertSquare(i, input) {
-    if (!squares.has(i)) {
-        squares.set(i, new Array())
-    }
-    var square = squares.get(i)
-    square.push(input)
+    field.print()
 }

@@ -1,6 +1,7 @@
 var mainStyle
 
 function initCircles() {
+    console.log('initializing circles ...')
     mainStyle = getComputedStyle(document.querySelector('main'))
     var i = 1
     while (true) {

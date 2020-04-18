@@ -42,7 +42,7 @@ main {
     align-items: center;
 }
 
-.sudoku>* {
+.sudoku>.square {
     z-index: inherit;
     height: 3rem;
     width: 3rem;
@@ -52,7 +52,7 @@ main {
     align-items: center;
 }
 
-.sudoku>*>input {
+.sudoku>.square>input {
     z-index: inherit;
     height: 1rem;
     width: 1rem;
