@@ -2,6 +2,7 @@
 const VALID = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 var field = new Field()
+var inputs = new Inputs()
 
 function initSudoku() {
     try {
@@ -29,21 +30,47 @@ function validateInput(e, f) {
 }
 
 function keyPressed(e) {
-    var target = e.target
-    target.value = ''
+    const field = e.target
+    const oldValue = field.value
+    const newValue = e.key
+    inputs.track(field, oldValue, newValue)
+    field.value = ''
 }
 
 function keyUp(e) {
-    console.log(e)
+    inputs.print()
 }
 
 function check() {
     const mistakes = field.getMistakes()
+    const emptyFields = field.getAllEmpty()
     if (mistakes.length > 0) {
         let msg = 'The sudoku is invalid because:\n'
         for (let i = 0; i < mistakes.length; i++) {
             msg += '\t - ' + mistakes[i] + '\n'
         }
         alert(msg)
+    } else if (emptyFields.length > 0) {
+        alert('The sudoku is valid, but not solved yet!')
+    } else {
+        alert('The sudoku is solved. Good job!')
+    }
+}
+
+function undo() {
+    this.inputs.undo()
+}
+
+function solve() {
+    if (field.isSolved()) {
+        return true
+    }
+    const emptyFields = field.getAllEmpty()
+    if (emptyFields.length == 0) {
+        check()
+        return false
+    }
+    for (let i = 0; i < emptyFields.length; i++) {
+
     }
 }

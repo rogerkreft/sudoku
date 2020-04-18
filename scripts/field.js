@@ -46,6 +46,18 @@ class Field {
         return column
     }
 
+    isSolved() {
+        const emptyFields = getAllEmpty()
+        if (emptyFields.length > 0) {
+            return false
+        }
+        const mistakes = getMistakes()
+        if (mistakes.length > 0) {
+            return false
+        }
+        return true
+    }
+
     getMistakes() {
         var mistakes = new Array()
         for (let i = 0; i < 9; i++) {
@@ -88,6 +100,29 @@ class Field {
             }
         }
         return true
+    }
+
+    getAllEmpty() {
+        let empty = new Array()
+        for (let i = 0; i < 9; i++) {
+            const square = this.getSquare(i)
+            for (let j = 0; j < square.length; j++) {
+                const field = square[j]
+                if (field == null || field.value == null || field.value == '' || !VALID.includes(field.value)) {
+                    empty.push(field)
+                }
+            }
+        }
+        return empty
+    }
+
+    getAnyEmpty() {
+        const empty = this.getAllEmpty()
+        if (empty != null && empty.length > 0) {
+            const randomIndex = Math.floor(Math.random() * empty.length)
+            return empty[randomIndex]
+        }
+        return null
     }
 
     print() {

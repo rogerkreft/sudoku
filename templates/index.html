@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/css/mq-1200-plus.css" media="(min-width:1200px)">
     <script type="text/javascript" src="/scripts/init.js"></script>
     <script type="text/javascript" src="/scripts/circles.js"></script>
+    <script type="text/javascript" src="/scripts/inputs.js"></script>
     <script type="text/javascript" src="/scripts/field.js"></script>
     <script type="text/javascript" src="/scripts/sudoku.js"></script>
 </head>
@@ -125,8 +126,10 @@
             </div>
         </div>
         <div class="buttons">
-            <button>restart</button>
             <button onclick="check()">check</button>
+            <button onclick="undo()">undo</button>
+            <button onclick="solve()">solve</button>
+            <button>restart</button>
             <button>difficulty</button>
             <button>generate</button>
         </div>
