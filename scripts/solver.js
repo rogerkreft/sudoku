@@ -1,21 +1,21 @@
 class Field {
     constructor() {
-        this.rows = new Map()
+        this.rows = new Array()
         for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
             let row = new Array()
             for (let columnIndex = 0; columnIndex < 9; columnIndex++) {
                 row[columnIndex] = { value: '', rowIndex: rowIndex, columnIndex: columnIndex }
             }
-            this.rows.set(rowIndex, row)
+            this.rows[rowIndex] = row
         }
     }
 
     set(rowIndex, columnIndex, v) {
-        this.rows.get(rowIndex)[columnIndex].value = v
+        this.rows[rowIndex][columnIndex].value = v
     }
 
     get(rowIndex, columnIndex) {
-        return this.rows.get(rowIndex)[columnIndex]
+        return this.rows[rowIndex][columnIndex]
     }
 
     getPossibleValues(rowIndex, columnIndex) {
@@ -43,7 +43,7 @@ class Field {
     }
 
     getRow(rowIndex) {
-        return this.rows.get(rowIndex)
+        return this.rows[rowIndex]
     }
 
     getColumn(columnIndex) {
@@ -157,14 +157,14 @@ class Field {
     }
 
     serialize() {
-        let serializedRows = new Map()
+        let serializedRows = new Array()
         for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
             const row = this.getRow(rowIndex)
             let serializedRow = new Array()
             for (let columnIndex = 0; columnIndex < row.length; columnIndex++) {
                 serializedRow.push(row[columnIndex].value)
             }
-            serializedRows.set(rowIndex, serializedRow)
+            serializedRows[rowIndex] = serializedRow
         }
         return serializedRows
     }
@@ -181,14 +181,12 @@ class Field {
     }
 }
 
+var fields = new Array()
 var field = new Field()
-var timer = new Date()
 
 onmessage = function (e) {
     let data = e.data
     console.log('Message received from main script:', data)
-    timer = new Date()
-    field = new Field()
     field.deserialize(data)
     if (solve()) {
         postMessage(field.serialize())
@@ -201,11 +199,6 @@ function solve() {
     if (field.isSolved()) {
         return true
     }
-    if (hasToSendStatusMessage()) {
-        timer = new Date()
-        let statusMsg = timer.toString() + '\n' + field.toString()
-        console.log(statusMsg)
-    }
     const emptyFields = field.getAllEmptyFields()
     for (let i = 0; i < emptyFields.length; i++) {
         const emptyField = emptyFields[i]
@@ -216,31 +209,16 @@ function solve() {
                 return true
             }
         }
+        emptyField.value = ''
+        for (let j = 0; j < fields.length; j++) {
+            if (fields[j].toString() == field.toString()) {
+                return false
+            }
+        }
+        fields.push(field)
+        if (possibleValues.length == 0) {
+            return false
+        }
     }
     return false
-}
-
-function hasToSendStatusMessage() {
-    if (getSecondDifference(timer, new Date()) > 10) {
-        return true
-    }
-    return false
-}
-
-function getMinuteDifference(date1, date2) {
-    if (date1 == null || date2 == null) {
-        return null
-    }
-    const minute = 1000 * 60
-    const diffInMillis = date2.getTime() - date1.getTime()
-    return Math.floor(diffInMillis / minute)
-}
-
-function getSecondDifference(date1, date2) {
-    if (date1 == null || date2 == null) {
-        return null
-    }
-    const minute = 1000
-    const diffInMillis = date2.getTime() - date1.getTime()
-    return Math.floor(diffInMillis / minute)
 }

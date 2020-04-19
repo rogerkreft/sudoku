@@ -144,7 +144,7 @@ class Field {
     deserialize(serializedRows) {
         for (let i = 0; i < 9; i++) {
             let row = this.getRow(i)
-            const serializedRow = serializedRows.get(i)
+            const serializedRow = serializedRows[i]
             for (let j = 0; j < serializedRow.length; j++) {
                 let choice = new KeyPressEvent(row[j], serializedRow[j])
                 choice.execute()
