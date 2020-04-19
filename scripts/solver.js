@@ -83,9 +83,6 @@ class Field {
     }
 
     isSolved() {
-        if (this.getAllEmptyFields().length > 0) {
-            return false
-        }
         for (let i = 0; i < 9; i++) {
             if (!this.isArraySolved(this.getRow(i))) {
                 return false
@@ -190,8 +187,9 @@ var timer = new Date()
 onmessage = function (e) {
     let data = e.data
     console.log('Message received from main script:', data)
-    field.deserialize(data)
     timer = new Date()
+    field = new Field()
+    field.deserialize(data)
     if (solve()) {
         postMessage(field.serialize())
     } else {
@@ -206,19 +204,17 @@ function solve() {
     if (hasToSendStatusMessage()) {
         timer = new Date()
         let statusMsg = timer.toString() + '\n' + field.toString()
-        postMessage(statusMsg)
+        console.log(statusMsg)
     }
-    const emptyFields = shuffle(field.getAllEmptyFields())
+    const emptyFields = field.getAllEmptyFields()
     for (let i = 0; i < emptyFields.length; i++) {
         const emptyField = emptyFields[i]
         const possibleValues = field.getPossibleValues(emptyField.rowIndex, emptyField.columnIndex)
         for (let v = 0; v < possibleValues.length; v++) {
-            const oldValue = emptyField.value
             emptyField.value = possibleValues[v]
             if (solve()) {
                 return true
             }
-            emptyField.value = oldValue
         }
     }
     return false
@@ -247,23 +243,4 @@ function getSecondDifference(date1, date2) {
     const minute = 1000
     const diffInMillis = date2.getTime() - date1.getTime()
     return Math.floor(diffInMillis / minute)
-}
-
-function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
-
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-
-        // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-
-        // And swap it with the current element.
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-    }
-
-    return array;
 }
