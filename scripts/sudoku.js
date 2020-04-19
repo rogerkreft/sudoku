@@ -48,6 +48,19 @@ function solve() {
 }
 
 onmessage = function (e) {
-    console.log('Message received from worker script:', e.data)
-    field.deserialize(e.data)
+    console.log('Message received from worker script:')
+    if (typeof e.data === 'string' || e.data instanceof String) {
+        // we got a status message or an error
+        if (e.data.startsWith('ERROR')) {
+            // we got an error and display it
+            alert(e.data)
+        } else {
+            // we got a status update and log it
+            console.log(e.data)
+        }
+    } else {
+        console.log(e.data)
+        alert('SOLVED')
+        field.deserialize(e.data)
+    }
 }

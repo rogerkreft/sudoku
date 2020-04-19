@@ -129,24 +129,24 @@ class Field {
     }
 
     serialize() {
-        let serializedSquares = new Map()
+        let serializedRows = new Map()
         for (let i = 0; i < 9; i++) {
-            let serializedSquare = new Array()
-            const square = this.getSquare(i)
-            for (let j = 0; j < square.length; j++) {
-                serializedSquare[j] = square[j].value
+            let serializedRow = new Array()
+            const row = this.getRow(i)
+            for (let j = 0; j < row.length; j++) {
+                serializedRow[j] = row[j].value
             }
-            serializedSquares.set(i, serializedSquare)
+            serializedRows.set(i, serializedRow)
         }
-        return serializedSquares
+        return serializedRows
     }
 
-    deserialize(serializedSquares) {
+    deserialize(serializedRows) {
         for (let i = 0; i < 9; i++) {
-            let square = this.getSquare(i)
-            const serializedSquare = serializedSquares.get(i)
-            for (let j = 0; j < serializedSquare.length; j++) {
-                let choice = new KeyPressEvent(square[j], serializedSquare[j])
+            let row = this.getRow(i)
+            const serializedRow = serializedRows.get(i)
+            for (let j = 0; j < serializedRow.length; j++) {
+                let choice = new KeyPressEvent(row[j], serializedRow[j])
                 choice.execute()
             }
         }

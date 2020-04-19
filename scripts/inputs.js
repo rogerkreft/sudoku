@@ -50,7 +50,7 @@ class KeyPressEvent {
     execute() {
         keyPressed(this)
         this.target.value = this.key
-        console.log('typing', this.key, 'into', this.target)
+        //console.log('typing', this.key, 'into', this.target)
     }
 }
 
