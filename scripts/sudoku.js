@@ -43,13 +43,20 @@ function restart() {
 
 function solve() {
     let solver = new Worker('/scripts/solver.js')
-    solver.onmessage = onmessage
+    solver.onmessage = processSolution
     solver.postMessage('SOLVE')
     solver.postMessage(field.serialize())
 }
 
-onmessage = function (e) {
-    console.log('Message received from worker script:')
+function generate() {
+    let solver = new Worker('/scripts/solver.js')
+    solver.onmessage = processSolution
+    solver.postMessage('GENERATE')
+    solver.postMessage(field.serialize())
+}
+
+function processSolution(e) {
+    //console.log('Message received from worker script:')
     if (typeof e.data === 'string' || e.data instanceof String) {
         // we got a status message or an error
         if (e.data.startsWith('ERROR')) {

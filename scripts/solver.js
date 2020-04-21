@@ -181,8 +181,10 @@ class Field {
     }
 }
 
-var fields = new Array()
-var field = new Field()
+var feedbackFunction
+var field
+var fields
+var solutions
 
 onmessage = onMessage
 
@@ -190,29 +192,50 @@ function onMessage(e) {
     const data = e.data
     console.log('Message received from main script:', data)
     if (data == 'SOLVE') {
-        onmessage = getAnySolution
+        feedbackFunction = returnAnySolution
+    } else if (data == 'GENERATE') {
+        feedbackFunction = countSolutions
     }
+    onmessage = solveAndReturnFeedback
 }
 
-function getAnySolution(e) {
+function returnAnySolution() {
+    postMessage(solutions[0].serialize())
+}
+
+function countSolutions() {
+    postMessage('Found ' + solutions.length + ' solutions!')
+}
+
+function solveAndReturnFeedback(e) {
     try {
         const data = e.data
         console.log('Message received from main script:', data)
-        fields = new Array()
-        field = new Field()
-        field.deserialize(data)
-        if (solve()) {
-            postMessage(field.serialize())
-        } else {
+        generateSolutions(data)
+        if (solutions.length == 0) {
             postMessage('ERROR: sudoku is unsolvable')
+        } else {
+            feedbackFunction()
         }
+    } catch (err) {
+        postMessage('ERROR:', err)
     } finally {
         onmessage = onMessage
     }
 }
 
+function generateSolutions(data) {
+    field = new Field()
+    fields = new Array()
+    solutions = new Array()
+    field.deserialize(data)
+    solve()
+}
+
 function solve() {
     if (field.isSolved()) {
+        postMessage('Found solution')
+        solutions.push(field)
         return true
     }
     const emptyFields = field.getAllEmptyFields()
@@ -221,9 +244,7 @@ function solve() {
         const possibleValues = field.getPossibleValues(emptyField.rowIndex, emptyField.columnIndex)
         for (let v = 0; v < possibleValues.length; v++) {
             emptyField.value = possibleValues[v]
-            if (solve()) {
-                return true
-            }
+            solve()
         }
         emptyField.value = ''
         if (currentStateAlreadyReached()) {
