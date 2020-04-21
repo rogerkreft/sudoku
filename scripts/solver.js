@@ -184,14 +184,30 @@ class Field {
 var fields = new Array()
 var field = new Field()
 
-onmessage = function (e) {
-    let data = e.data
+onmessage = onMessage
+
+function onMessage(e) {
+    const data = e.data
     console.log('Message received from main script:', data)
-    field.deserialize(data)
-    if (solve()) {
-        postMessage(field.serialize())
-    } else {
-        postMessage('ERROR: sudoku is unsolvable')
+    if (data == 'SOLVE') {
+        onmessage = getAnySolution
+    }
+}
+
+function getAnySolution(e) {
+    try {
+        const data = e.data
+        console.log('Message received from main script:', data)
+        fields = new Array()
+        field = new Field()
+        field.deserialize(data)
+        if (solve()) {
+            postMessage(field.serialize())
+        } else {
+            postMessage('ERROR: sudoku is unsolvable')
+        }
+    } finally {
+        onmessage = onMessage
     }
 }
 
@@ -210,14 +226,21 @@ function solve() {
             }
         }
         emptyField.value = ''
-        for (let j = 0; j < fields.length; j++) {
-            if (fields[j].toString() == field.toString()) {
-                return false
-            }
+        if (currentStateAlreadyReached()) {
+            return false
         }
         fields.push(field)
         if (possibleValues.length == 0) {
             return false
+        }
+    }
+    return false
+}
+
+function currentStateAlreadyReached() {
+    for (let i = 0; i < fields.length; i++) {
+        if (fields[i].toString() == field.toString()) {
+            return true
         }
     }
     return false

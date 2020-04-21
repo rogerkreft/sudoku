@@ -44,6 +44,7 @@ function restart() {
 function solve() {
     let solver = new Worker('/scripts/solver.js')
     solver.onmessage = onmessage
+    solver.postMessage('SOLVE')
     solver.postMessage(field.serialize())
 }
 
