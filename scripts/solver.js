@@ -149,7 +149,7 @@ class Field {
 
     deserialize(serializedRows) {
         for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
-            const serializedRow = serializedRows.get(rowIndex)
+            const serializedRow = serializedRows[rowIndex]
             for (let columnIndex = 0; columnIndex < serializedRow.length; columnIndex++) {
                 this.set(rowIndex, columnIndex, serializedRow[columnIndex])
             }
@@ -192,7 +192,7 @@ class Field {
     }
 }
 
-var feedbackFunction
+var feedbackFunction = function () { return false }
 var field
 var fields
 var solutions
@@ -206,7 +206,8 @@ onmessage = function (e) {
     } else if (data == 'COUNT') {
         feedbackFunction = count
     } else if (data == 'GENERATE') {
-        // TODO
+        generate()
+        postMessage(field)
     } else {
         try {
             generateSolutions(data)
@@ -218,7 +219,7 @@ onmessage = function (e) {
             postMessage('ERROR: ' + err)
             throw err
         } finally {
-            feedbackFunction = function () { return true }
+            feedbackFunction = function () { return false }
         }
     }
 }
@@ -250,7 +251,9 @@ function reset() {
 
 function generateSolutions(data) {
     reset()
-    field.deserialize(data)
+    if (data != null) {
+        field.deserialize(data)
+    }
     solve()
     done = true
 }
@@ -291,4 +294,15 @@ function currentStateAlreadyReached() {
         }
     }
     return false
+}
+
+function generate() {
+    while (solutions.length != 1) {
+        generateRandomField()
+        generateSolutions(null)
+    }
+}
+
+function generateRandomField() {
+
 }

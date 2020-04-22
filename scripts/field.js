@@ -1,24 +1,24 @@
 class Field {
 
     constructor() {
-        this.squares = new Map()
+        this.squares = new Array()
     }
 
     insertSquare(index, fields) {
-        if (!this.squares.has(index)) {
-            this.squares.set(index, new Array())
+        if (!this.squares[index]) {
+            this.squares[index] = new Array()
         }
-        var square = this.squares.get(index)
+        var square = this.squares[index]
         for (let i = 0; i < 9; i++) {
             square[i] = fields[i]
         }
     }
 
     getSquare(index) {
-        if (!this.squares.has(index)) {
-            this.squares.set(index, new Array())
+        if (!this.squares[index]) {
+            this.squares[index] = new Array()
         }
-        return this.squares.get(index)
+        return this.squares[index]
     }
 
     getRow(index) {
@@ -29,7 +29,7 @@ class Field {
             let minField = (index % 3) * 3
             let maxField = minField + 2
             for (let field = minField; field <= maxField; field++) {
-                row.push(this.squares.get(square)[field])
+                row.push(this.squares[square][field])
             }
         }
         return row
@@ -43,7 +43,7 @@ class Field {
             let minField = (index % 3)
             let maxField = minField + 6
             for (let field = minField; field <= maxField; field += 3) {
-                column.push(this.squares.get(square)[field])
+                column.push(this.squares[square][field])
             }
         }
         return column
@@ -129,14 +129,14 @@ class Field {
     }
 
     serialize() {
-        let serializedRows = new Map()
+        let serializedRows = new Array()
         for (let i = 0; i < 9; i++) {
             let serializedRow = new Array()
             const row = this.getRow(i)
             for (let j = 0; j < row.length; j++) {
                 serializedRow[j] = row[j].value
             }
-            serializedRows.set(i, serializedRow)
+            serializedRows[i] = serializedRow
         }
         return serializedRows
     }
