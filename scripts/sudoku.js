@@ -59,7 +59,6 @@ function generate() {
     let solver = new Worker('/scripts/solver.js')
     solver.onmessage = processSolution
     solver.postMessage('GENERATE')
-    solver.postMessage(field.serialize())
 }
 
 function processSolution(e) {
@@ -69,7 +68,7 @@ function processSolution(e) {
         alert(e.data)
         console.log(e.data)
     } else {
-        alert('SOLVED')
+        alert('DONE')
         field.deserialize(e.data)
     }
 }

@@ -11,6 +11,10 @@ class Field {
     }
 
     set(rowIndex, columnIndex, v) {
+        const newValue = v.toString()
+        if (!['', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(newValue)) {
+            throw new Error('ERROR: trying to set [' + rowIndex + ',' + columnIndex + '] to illegal value [' + newValue + '] in \n' + this.toString())
+        }
         this.rows[rowIndex][columnIndex].value = v
     }
 
@@ -80,6 +84,19 @@ class Field {
             }
         }
         return emptyFields
+    }
+
+    getAllFilledFields() {
+        let filledFields = new Array()
+        for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
+            for (let columnIndex = 0; columnIndex < 9; columnIndex++) {
+                const field = this.get(rowIndex, columnIndex)
+                if (field != null && field.value != null && field.value != '' && field.value != '0') {
+                    filledFields.push(field)
+                }
+            }
+        }
+        return filledFields
     }
 
     isSolved() {
@@ -192,11 +209,28 @@ class Field {
     }
 }
 
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1))
+        const x = array[i]
+        array[i] = array[j]
+        array[j] = x
+    }
+    return array
+}
+
 var feedbackFunction = function () { return false }
 var field
 var fields
 var solutions
 var done
+
+function reset() {
+    field = new Field()
+    fields = new Array()
+    solutions = new Array()
+    done = false
+}
 
 onmessage = function (e) {
     const data = e.data
@@ -206,14 +240,14 @@ onmessage = function (e) {
     } else if (data == 'COUNT') {
         feedbackFunction = count
     } else if (data == 'GENERATE') {
-        generate()
-        postMessage(field)
+        postMessage(generate())
     } else {
         try {
             generateSolutions(data)
-            feedbackFunction()
             if (done && solutions.length == 0) {
                 postMessage('ERROR: sudoku is unsolvable')
+            } else {
+                feedbackFunction()
             }
         } catch (err) {
             postMessage('ERROR: ' + err)
@@ -242,26 +276,19 @@ function count() {
     return false
 }
 
-function reset() {
-    field = new Field()
-    fields = new Array()
-    solutions = new Array()
-    done = false
-}
-
 function generateSolutions(data) {
     reset()
-    if (data != null) {
-        field.deserialize(data)
-    }
+    field.deserialize(data)
     solve()
     done = true
 }
 
 function solve() {
     if (field.isSolved()) {
-        console.log('Found solution')
-        solutions.push(field.clone())
+        if (!asStringsArray(solutions).includes(field.toString())) {
+            console.log('Found solution')
+            solutions.push(field.clone())
+        }
         return true
     }
     if (feedbackFunction()) {
@@ -276,7 +303,7 @@ function solve() {
             solve()
         }
         emptyField.value = ''
-        if (currentStateAlreadyReached()) {
+        if (asStringsArray(fields).includes(field.toString())) {
             return false
         }
         fields.push(field)
@@ -287,22 +314,63 @@ function solve() {
     return false
 }
 
-function currentStateAlreadyReached() {
-    for (let i = 0; i < fields.length; i++) {
-        if (fields[i].toString() == field.toString()) {
-            return true
-        }
+function asStringsArray(array) {
+    var stringsArray = new Array()
+    for (let i = 0; i < array.length; i++) {
+        stringsArray.push(array[i].toString())
+    }
+    return stringsArray
+}
+
+function abortOnMoreThanOneSolution() {
+    if (solutions.length > 1) {
+        return true
     }
     return false
 }
 
 function generate() {
-    while (solutions.length != 1) {
-        generateRandomField()
-        generateSolutions(null)
+    let generatedField = getRandomInitialField()
+    feedbackFunction = abortOnMoreThanOneSolution
+    while (solutions.length == 1) {
+        const filledFields = shuffle(generatedField.getAllFilledFields())
+        console.log('starting to remove fields from the remaining ' + filledFields.length + ' of\n' + generatedField.toString())
+        for (let i = 0; i < filledFields.length; i++) {
+            const field = filledFields[i]
+            const oldValue = field.value
+            field.value = ''
+            generateSolutions(generatedField.serialize())
+            if (solutions.length > 1) {
+                field.value = oldValue
+            }
+        }
+        if (generatedField.getAllFilledFields().length == filledFields.length) {
+            break
+        }
     }
+    return generatedField.serialize()
 }
 
-function generateRandomField() {
-
+function getRandomInitialField() {
+    reset()
+    const emptyFields = shuffle(field.getAllEmptyFields())
+    let filledFieldCount = 0
+    for (let i = 0; i < emptyFields.length; i++) {
+        const emptyField = emptyFields[i]
+        const possibleValues = field.getPossibleValues(emptyField.rowIndex, emptyField.columnIndex)
+        if (possibleValues.length == 0) {
+            continue
+        }
+        emptyField.value = possibleValues[Math.floor(Math.random() * possibleValues.length)]
+        if (filledFieldCount++ >= 17) {
+            break
+        }
+    }
+    feedbackFunction = function () { return (solutions.length > 0) }
+    reset()
+    this.solve()
+    if (solutions.length == 0) {
+        return getRandomInitialField()
+    }
+    return solutions[0]
 }
