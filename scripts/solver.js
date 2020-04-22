@@ -169,6 +169,17 @@ class Field {
         return serializedRows
     }
 
+    clone() {
+        let clonedField = new Field()
+        for (let rowIndex = 0; rowIndex < this.rows.length; rowIndex++) {
+            const row = this.getRow(rowIndex)
+            for (let columnIndex = 0; columnIndex < row.length; columnIndex++) {
+                clonedField.set(rowIndex, columnIndex, this.get(rowIndex, columnIndex).value)
+            }
+        }
+        return clonedField
+    }
+
     toString() {
         let s = ''
         for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
@@ -185,58 +196,73 @@ var feedbackFunction
 var field
 var fields
 var solutions
+var done
 
-onmessage = onMessage
-
-function onMessage(e) {
+onmessage = function (e) {
     const data = e.data
     console.log('Message received from main script:', data)
     if (data == 'SOLVE') {
-        feedbackFunction = returnAnySolution
+        feedbackFunction = getAnySolution
+    } else if (data == 'COUNT') {
+        feedbackFunction = count
     } else if (data == 'GENERATE') {
-        feedbackFunction = countSolutions
-    }
-    onmessage = solveAndReturnFeedback
-}
-
-function returnAnySolution() {
-    postMessage(solutions[0].serialize())
-}
-
-function countSolutions() {
-    postMessage('Found ' + solutions.length + ' solutions!')
-}
-
-function solveAndReturnFeedback(e) {
-    try {
-        const data = e.data
-        console.log('Message received from main script:', data)
-        generateSolutions(data)
-        if (solutions.length == 0) {
-            postMessage('ERROR: sudoku is unsolvable')
-        } else {
+        // TODO
+    } else {
+        try {
+            generateSolutions(data)
             feedbackFunction()
+            if (done && solutions.length == 0) {
+                postMessage('ERROR: sudoku is unsolvable')
+            }
+        } catch (err) {
+            postMessage('ERROR: ' + err)
+            throw err
+        } finally {
+            feedbackFunction = function () { return true }
         }
-    } catch (err) {
-        postMessage('ERROR:', err)
-    } finally {
-        onmessage = onMessage
     }
 }
 
-function generateSolutions(data) {
+function getAnySolution() {
+    if (solutions.length > 0) {
+        postMessage(solutions[0].serialize())
+        feedbackFunction = function () { return true }
+        return true
+    }
+    return false
+}
+
+function count() {
+    if (done) {
+        postMessage('Found ' + solutions.length + ' solutions!')
+        feedbackFunction = function () { return true }
+        return true
+    }
+    return false
+}
+
+function reset() {
     field = new Field()
     fields = new Array()
     solutions = new Array()
+    done = false
+}
+
+function generateSolutions(data) {
+    reset()
     field.deserialize(data)
     solve()
+    done = true
 }
 
 function solve() {
     if (field.isSolved()) {
-        postMessage('Found solution')
-        solutions.push(field)
+        console.log('Found solution')
+        solutions.push(field.clone())
         return true
+    }
+    if (feedbackFunction()) {
+        return false
     }
     const emptyFields = field.getAllEmptyFields()
     for (let i = 0; i < emptyFields.length; i++) {

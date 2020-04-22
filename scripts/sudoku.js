@@ -35,17 +35,24 @@ function undo() {
     inputs.undo()
 }
 
-function restart() {
-    while (inputs.hasStoredInputs()) {
-        this.inputs.undo()
-    }
-}
-
 function solve() {
     let solver = new Worker('/scripts/solver.js')
     solver.onmessage = processSolution
     solver.postMessage('SOLVE')
     solver.postMessage(field.serialize())
+}
+
+function count() {
+    let solver = new Worker('/scripts/solver.js')
+    solver.onmessage = processSolution
+    solver.postMessage('COUNT')
+    solver.postMessage(field.serialize())
+}
+
+function restart() {
+    while (inputs.hasStoredInputs()) {
+        this.inputs.undo()
+    }
 }
 
 function generate() {
@@ -56,18 +63,12 @@ function generate() {
 }
 
 function processSolution(e) {
-    //console.log('Message received from worker script:')
-    if (typeof e.data === 'string' || e.data instanceof String) {
-        // we got a status message or an error
-        if (e.data.startsWith('ERROR')) {
-            // we got an error and display it
-            alert(e.data)
-        } else {
-            // we got a status update and log it
-            console.log(e.data)
-        }
-    } else {
+    const data = e.data
+    console.log('Message received from worker script:', data)
+    if (typeof data === 'string' || data instanceof String) {
+        alert(e.data)
         console.log(e.data)
+    } else {
         alert('SOLVED')
         field.deserialize(e.data)
     }
