@@ -36,6 +36,11 @@ function undo() {
 }
 
 function solve() {
+    beforeProcessSolutionFunction = null
+    processSolutionFunction = function (data) {
+        field.deserializeSolution(data)
+    }
+    afterProcessSolutionFunction = null
     let solver = new Worker('/scripts/solver.js')
     solver.onmessage = processSolution
     solver.postMessage('SOLVE')
@@ -56,19 +61,77 @@ function restart() {
 }
 
 function generate() {
+    beforeProcessSolutionFunction = function () {
+        var inputs = document.querySelectorAll('input')
+        for (let i = 0; i < inputs.length; i++) {
+            inputs[i].removeAttribute('disabled', '')
+        }
+    }
+    processSolutionFunction = function (data) {
+        field.deserializeGeneratedField(data)
+    }
+    afterProcessSolutionFunction = function () {
+        var inputs = document.querySelectorAll('input')
+        for (let i = 0; i < inputs.length; i++) {
+            const input = inputs[i]
+            if (input.value != '') {
+                input.setAttribute('disabled', '')
+            }
+        }
+    }
     let solver = new Worker('/scripts/solver.js')
     solver.onmessage = processSolution
     solver.postMessage('GENERATE')
 }
 
+var beforeProcessSolutionFunction
+var processSolutionFunction
+var afterProcessSolutionFunction
+
 function processSolution(e) {
-    const data = e.data
-    console.log('Message received from worker script:', data)
-    if (typeof data === 'string' || data instanceof String) {
-        alert(e.data)
-        console.log(e.data)
-    } else {
-        alert('DONE')
-        field.deserialize(e.data)
+    if (beforeProcessSolutionFunction != null) {
+        beforeProcessSolutionFunction()
+        beforeProcessSolutionFunction = null
+    }
+    try {
+        const data = e.data
+        console.log('Message received from worker script:', data)
+        if (typeof data === 'string' || data instanceof String) {
+            alert(e.data)
+        } else {
+            processSolutionFunction(e.data)
+        }
+    } finally {
+        enableInputs(true)
+    }
+    if (afterProcessSolutionFunction != null) {
+        afterProcessSolutionFunction()
+        afterProcessSolutionFunction = null
+    }
+}
+
+function lockGUI(func) {
+    try {
+        enableInputs(false)
+        func()
+    } catch (err) {
+        console.log(err)
+        enableInputs(true)
+    }
+}
+
+function enableInputs(enable) {
+    var inputs = document.querySelectorAll('input,button')
+    for (let i = 0; i < inputs.length; i++) {
+        const input = inputs[i]
+        let inputDisabled = input.getAttribute('disabled')
+        if (inputDisabled == '') {
+            continue
+        }
+        if (enable) {
+            input.removeAttribute('disabled')
+        } else {
+            input.setAttribute('disabled', true)
+        }
     }
 }

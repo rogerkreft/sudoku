@@ -141,7 +141,17 @@ class Field {
         return serializedRows
     }
 
-    deserialize(serializedRows) {
+    deserializeGeneratedField(serializedRows) {
+        for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
+            let row = this.getRow(rowIndex)
+            const serializedRow = serializedRows[rowIndex]
+            for (let columnIndex = 0; columnIndex < serializedRow.length; columnIndex++) {
+                row[columnIndex].value = serializedRow[columnIndex]
+            }
+        }
+    }
+
+    deserializeSolution(serializedRows) {
         for (let i = 0; i < 9; i++) {
             let row = this.getRow(i)
             const serializedRow = serializedRows[i]

@@ -286,7 +286,6 @@ function generateSolutions(data) {
 function solve() {
     if (field.isSolved()) {
         if (!asStringsArray(solutions).includes(field.toString())) {
-            console.log('Found solution')
             solutions.push(field.clone())
         }
         return true
@@ -334,7 +333,6 @@ function generate() {
     feedbackFunction = abortOnMoreThanOneSolution
     while (solutions.length == 1) {
         const filledFields = shuffle(generatedField.getAllFilledFields())
-        console.log('starting to remove fields from the remaining ' + filledFields.length + ' of\n' + generatedField.toString())
         for (let i = 0; i < filledFields.length; i++) {
             const field = filledFields[i]
             const oldValue = field.value
