@@ -79,6 +79,9 @@ function solve() {
 	for (let i = 0; i < emptyFields.length; i++) {
 		const emptyField = emptyFields[i]
 		const possibleValues = field.getPossibleValues(emptyField.rowIndex, emptyField.columnIndex)
+		if (possibleValues.length == 0) {
+			return false
+		}
 		for (let v = 0; v < possibleValues.length; v++) {
 			emptyField.value = possibleValues[v]
 			solve()
@@ -88,9 +91,6 @@ function solve() {
 			return false
 		}
 		fields.push(field)
-		if (possibleValues.length == 0) {
-			return false
-		}
 	}
 	return false
 }
@@ -149,7 +149,7 @@ function getRandomInitialField() {
 	feedbackFunction = function () { return (solutions.length > 0) }
 	this.solve()
 	if (solutions.length == 0) {
-		console.log('initial field is unsolvable, restarting')
+		console.log('restarting because of insolvable field\n' + field.toString())
 		return getRandomInitialField()
 	}
 	return solutions[0]

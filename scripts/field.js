@@ -199,13 +199,13 @@ class Field {
 		const square = this.getSquare(this.getSquareIndex(rowIndex, columnIndex))
 		let possibleValues = new Array()
 		for (let i = 1; i <= 9; i++) {
-			if (this.includes(row, i)) {
+			if (includes(row, i)) {
 				continue
 			}
-			if (this.includes(column, i)) {
+			if (includes(column, i)) {
 				continue
 			}
-			if (this.includes(square, i)) {
+			if (includes(square, i)) {
 				continue
 			}
 			possibleValues.push(i.toString())
@@ -215,15 +215,6 @@ class Field {
 
 	getSquareIndex(rowIndex, columnIndex) {
 		return Math.floor(rowIndex / 3) * 3 + Math.floor(columnIndex / 3)
-	}
-
-	includes(array, value) {
-		for (let i = 0; i < array.length; i++) {
-			if (array[i].value == value) {
-				return true
-			}
-		}
-		return false
 	}
 
 	clone() {
@@ -247,6 +238,15 @@ class Field {
 		}
 		return s
 	}
+}
+
+function includes(array, value) {
+	for (let i = 0; i < array.length; i++) {
+		if (array[i].value == value) {
+			return true
+		}
+	}
+	return false
 }
 
 function asStringsArray(array) {
