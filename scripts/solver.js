@@ -333,8 +333,10 @@ function abortOnMoreThanOneSolution() {
 }
 
 function generate() {
+    console.log('generating field')
     let generatedField = getRandomInitialField()
     feedbackFunction = abortOnMoreThanOneSolution
+    console.log('removing fields as long as there is only a single possible solution')
     while (solutions.length == 1) {
         const filledFields = shuffle(generatedField.getAllFilledFields())
         for (let i = 0; i < filledFields.length; i++) {
@@ -347,6 +349,7 @@ function generate() {
             }
         }
         if (generatedField.getAllFilledFields().length == filledFields.length) {
+            console.log('no values are removable from field without having more than one solution. We found a sudoku!')
             break
         }
     }
@@ -354,6 +357,7 @@ function generate() {
 }
 
 function getRandomInitialField() {
+    console.log('building random initial field')
     reset()
     const emptyFields = shuffle(field.getAllEmptyFields())
     let filledFieldCount = 0
@@ -368,10 +372,11 @@ function getRandomInitialField() {
             break
         }
     }
+    console.log('getting a possible solution of the random initial field')
     feedbackFunction = function () { return (solutions.length > 0) }
-    reset()
     this.solve()
     if (solutions.length == 0) {
+        console.log('initial field is unsolvable, restarting')
         return getRandomInitialField()
     }
     return solutions[0]

@@ -147,7 +147,6 @@ class Field {
     }
 
     deserialize(serializedRows, useKeystrokes) {
-        console.log(this.squares)
         for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
             let row = this.getRow(rowIndex)
             const serializedRow = serializedRows[rowIndex]
