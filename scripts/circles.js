@@ -27,7 +27,7 @@ function getAnimationName(circle) {
 
 function animateCircle(circle) {
     placeCircle(circle)
-    var animationStyle = getAnimationStyle(circle)
+    var animationStyle = getStyleElementOf(circle)
     animationStyle.textContent = getKeyframes(circle)
     var duration = Math.random() * 60 * 1000
     circle.style.setProperty('animation-duration', duration + 'ms')
@@ -65,12 +65,12 @@ function toNumber(s) {
     return +s.replace('px', '')
 }
 
-function getAnimationStyle(circle) {
-    var style = circle.getElementsByTagName('style')[0]
+function getStyleElementOf(element) {
+    var style = element.getElementsByTagName('style')[0]
     if (style == null) {
         style = document.createElement('style')
         style.type = 'text/css'
-        circle.appendChild(style)
+        element.appendChild(style)
     }
     var text = style.getElementsByTagName('text')[0]
     if (text == null) {

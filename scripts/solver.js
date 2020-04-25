@@ -11,7 +11,11 @@ class Field {
     }
 
     set(rowIndex, columnIndex, v) {
-        const newValue = v.toString()
+        let newValue = v
+        if (newValue == null || newValue == undefined) {
+            newValue = ''
+        }
+        newValue = newValue.toString()
         if (!['', '1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(newValue)) {
             throw new Error('ERROR: trying to set [' + rowIndex + ',' + columnIndex + '] to illegal value [' + newValue + '] in \n' + this.toString())
         }

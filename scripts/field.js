@@ -89,7 +89,7 @@ class Field {
             if (input == null || input.value == null) {
                 return false
             }
-            if (input.value == '') {
+            if (input.value == '' || input.value.length > 1) {
                 continue
             }
             if (!VALID.includes(input.value)) {
@@ -134,7 +134,12 @@ class Field {
             let serializedRow = new Array()
             const row = this.getRow(i)
             for (let j = 0; j < row.length; j++) {
-                serializedRow[j] = row[j].value
+                const v = row[j].value
+                if (v.length == 1) {
+                    serializedRow[j] = v
+                } else {
+                    serializedRow[j] = ''
+                }
             }
             serializedRows[i] = serializedRow
         }
@@ -142,6 +147,7 @@ class Field {
     }
 
     deserialize(serializedRows, useKeystrokes) {
+        console.log(this.squares)
         for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
             let row = this.getRow(rowIndex)
             const serializedRow = serializedRows[rowIndex]
@@ -159,8 +165,6 @@ class Field {
     deserializeGeneratedField(serializedRows) {
         this.deserialize(serializedRows, false)
     }
-
-
 
     deserializeSolution(serializedRows) {
         this.deserialize(serializedRows, true)

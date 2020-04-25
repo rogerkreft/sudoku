@@ -22,6 +22,7 @@ class Inputs {
         if (this.hasStoredInputs()) {
             const lastAction = this.inputs.pop()
             lastAction.field.value = lastAction.oldValue
+            inputChanged({ target: lastAction.field })
         }
     }
 
@@ -50,7 +51,10 @@ class KeyPressEvent {
     execute() {
         keyPressed(this)
         this.target.value = this.key
+        inputChanged(this)
     }
+
+    preventDefault() { }
 }
 
 var inputs = new Inputs()
@@ -66,11 +70,45 @@ function validateInput(e, f) {
 function keyPressed(e) {
     const field = e.target
     const oldValue = field.value
-    const newValue = e.key
-    inputs.track(field, oldValue, newValue)
-    field.value = ''
+    const pressedKey = e.key
+    if (oldValue.includes(pressedKey)) {
+        e.preventDefault()
+        return
+    }
+    inputs.track(field, oldValue, pressedKey)
 }
 
 function keyUp(e) {
-    console.log(e)
+    if (VALID.includes(e.key)) {
+        const field = e.target
+        const indexOfPressedKey = field.value.indexOf(e.key)
+        field.selectionStart = indexOfPressedKey + 1
+        field.selectionEnd = indexOfPressedKey + 1
+    }
+}
+
+function inputChanged(e) {
+    const field = e.target
+    const cursorPos = field.selectionStart
+    const trimmed = field.value.replace(/\n| |/g, '')
+    if (trimmed.length > 1) {
+        field.classList.add('small')
+        s = ''
+        for (let i = 0; i < VALID.length; i++) {
+            if (field.value.includes(VALID[i])) {
+                s += VALID[i]
+            } else {
+                s += ' '
+            }
+            if (i == 2 || i == 5) {
+                s += '\n'
+            }
+        }
+        field.value = s
+        field.selectionStart = cursorPos
+        field.selectionEnd = cursorPos
+    } else {
+        field.classList.remove("small")
+        field.value = trimmed
+    }
 }

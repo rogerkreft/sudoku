@@ -2,11 +2,12 @@ function initSudoku() {
     try {
         var squares = document.querySelectorAll('.sudoku>.square')
         for (let i = 0; i < squares.length; i++) {
-            var inputs = squares[i].getElementsByTagName('input')
+            var inputs = squares[i].getElementsByClassName('field')
             for (let j = 0; j < inputs.length; j++) {
                 var input = inputs[j]
                 input.addEventListener('keypress', e => validateInput(e, keyPressed))
                 input.addEventListener('keyup', e => validateInput(e, keyUp))
+                input.addEventListener('input', inputChanged)
             }
             field.insertSquare(i, inputs)
         }
@@ -62,16 +63,18 @@ function restart() {
 
 function generate() {
     beforeProcessSolutionFunction = function () {
-        var inputs = document.querySelectorAll('input')
+        var inputs = document.querySelectorAll('.field')
         for (let i = 0; i < inputs.length; i++) {
             inputs[i].removeAttribute('disabled', '')
+            const kpe = new KeyPressEvent(inputs[i], '')
+            kpe.execute()
         }
     }
     processSolutionFunction = function (data) {
         field.deserializeGeneratedField(data)
     }
     afterProcessSolutionFunction = function () {
-        var inputs = document.querySelectorAll('input')
+        var inputs = document.querySelectorAll('.field')
         for (let i = 0; i < inputs.length; i++) {
             const input = inputs[i]
             if (input.value != '') {
@@ -79,7 +82,7 @@ function generate() {
             }
         }
     }
-    var inputs = document.querySelectorAll('input')
+    var inputs = document.querySelectorAll('.field')
     for (let i = 0; i < inputs.length; i++) {
         inputs[i].value = ''
     }
@@ -125,7 +128,7 @@ function lockGUI(func) {
 }
 
 function enableInputs(enable) {
-    var inputs = document.querySelectorAll('input,button')
+    var inputs = document.querySelectorAll('.field,button')
     for (let i = 0; i < inputs.length; i++) {
         const input = inputs[i]
         let inputDisabled = input.getAttribute('disabled')
