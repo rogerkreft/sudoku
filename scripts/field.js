@@ -141,25 +141,29 @@ class Field {
         return serializedRows
     }
 
-    deserializeGeneratedField(serializedRows) {
+    deserialize(serializedRows, useKeystrokes) {
         for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
             let row = this.getRow(rowIndex)
             const serializedRow = serializedRows[rowIndex]
             for (let columnIndex = 0; columnIndex < serializedRow.length; columnIndex++) {
-                row[columnIndex].value = serializedRow[columnIndex]
+                if (useKeystrokes) {
+                    let choice = new KeyPressEvent(row[columnIndex], serializedRow[columnIndex])
+                    choice.execute()
+                } else {
+                    row[columnIndex].value = serializedRow[columnIndex]
+                }
             }
         }
     }
 
+    deserializeGeneratedField(serializedRows) {
+        this.deserialize(serializedRows, false)
+    }
+
+
+
     deserializeSolution(serializedRows) {
-        for (let i = 0; i < 9; i++) {
-            let row = this.getRow(i)
-            const serializedRow = serializedRows[i]
-            for (let j = 0; j < serializedRow.length; j++) {
-                let choice = new KeyPressEvent(row[j], serializedRow[j])
-                choice.execute()
-            }
-        }
+        this.deserialize(serializedRows, true)
     }
 
     print() {
