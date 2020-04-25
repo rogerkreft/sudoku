@@ -1,186 +1,258 @@
 class Field {
 
-    constructor() {
-        this.squares = new Array()
-    }
+	constructor() {
+		this.rows = new Array()
+		for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
+			let row = new Array()
+			for (let columnIndex = 0; columnIndex < 9; columnIndex++) {
+				row[columnIndex] = { value: '', rowIndex: rowIndex, columnIndex: columnIndex }
+			}
+			this.rows[rowIndex] = row
+		}
+	}
 
-    insertSquare(index, fields) {
-        if (!this.squares[index]) {
-            this.squares[index] = new Array()
-        }
-        var square = this.squares[index]
-        for (let i = 0; i < 9; i++) {
-            square[i] = fields[i]
-        }
-    }
+	get(rowIndex, columnIndex) {
+		return this.rows[rowIndex][columnIndex]
+	}
 
-    getSquare(index) {
-        if (!this.squares[index]) {
-            this.squares[index] = new Array()
-        }
-        return this.squares[index]
-    }
+	set(rowIndex, columnIndex, inputField) {
+		this.rows[rowIndex][columnIndex] = inputField
+	}
 
-    getRow(index) {
-        var row = new Array()
-        var minSquare = Math.floor(index / 3) * 3
-        var maxSquare = minSquare + 2
-        for (let square = minSquare; square <= maxSquare; square++) {
-            let minField = (index % 3) * 3
-            let maxField = minField + 2
-            for (let field = minField; field <= maxField; field++) {
-                row.push(this.squares[square][field])
-            }
-        }
-        return row
-    }
+	getValue(rowIndex, columnIndex) {
+		return this.rows[rowIndex][columnIndex].value
+	}
 
-    getColumn(index) {
-        var column = new Array()
-        var minSquare = Math.floor(index / 3)
-        var maxSquare = minSquare + 6
-        for (let square = minSquare; square <= maxSquare; square += 3) {
-            let minField = (index % 3)
-            let maxField = minField + 6
-            for (let field = minField; field <= maxField; field += 3) {
-                column.push(this.squares[square][field])
-            }
-        }
-        return column
-    }
+	setValue(rowIndex, columnIndex, v) {
+		let newValue = v
+		if (newValue == null || newValue == undefined) {
+			newValue = ''
+		}
+		newValue = newValue.toString()
+		if (newValue != '' && !VALID.includes(newValue)) {
+			throw new Error('ERROR: trying to set [' + rowIndex + ',' + columnIndex + '] to illegal value [' + newValue + '] in \n' + this.toString())
+		}
+		this.get(rowIndex, columnIndex).value = v
+	}
 
-    isSolved() {
-        const emptyFields = this.getAllEmpty()
-        if (emptyFields.length > 0) {
-            return false
-        }
-        const mistakes = this.getMistakes()
-        if (mistakes.length > 0) {
-            return false
-        }
-        return true
-    }
+	getRow(rowIndex) {
+		return this.rows[rowIndex]
+	}
 
-    getMistakes() {
-        var mistakes = new Array()
-        for (let i = 0; i < 9; i++) {
-            const square = this.getSquare(i)
-            if (!this.isValid(square)) {
-                mistakes.push('square #' + (i + 1) + ' is invalid!')
-            }
-            const row = this.getRow(i)
-            if (!this.isValid(row)) {
-                mistakes.push('row #' + (i + 1) + ' is invalid!')
-            }
-            const column = this.getColumn(i)
-            if (!this.isValid(column)) {
-                mistakes.push('column #' + (i + 1) + ' is invalid!')
-            }
-        }
-        return mistakes
-    }
+	getColumn(columnIndex) {
+		let column = new Array()
+		for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
+			column.push(this.get(rowIndex, columnIndex))
+		}
+		return column
+	}
 
-    isValid(array) {
-        if (array == null || array.length != 9) {
-            return false
-        }
-        for (let i = 0; i < array.length; i++) {
-            const input = array[i]
-            if (input == null || input.value == null) {
-                return false
-            }
-            if (input.value == '' || input.value.length > 1) {
-                continue
-            }
-            if (!VALID.includes(input.value)) {
-                return false
-            }
-            for (let j = i + 1; j < array.length; j++) {
-                const otherInput = array[j];
-                if (input.value == otherInput.value) {
-                    return false
-                }
-            }
-        }
-        return true
-    }
+	getSquare(squareIndex) {
+		const minRow = Math.floor(squareIndex / 3) * 3
+		const maxRow = minRow + 3
+		const minColumn = Math.floor(squareIndex % 3) * 3
+		const maxColumn = minColumn + 3
+		let square = new Array()
+		for (let rowIndex = minRow; rowIndex < maxRow; rowIndex++) {
+			for (let columnIndex = minColumn; columnIndex < maxColumn; columnIndex++) {
+				square.push(this.get(rowIndex, columnIndex))
+			}
+		}
+		return square
+	}
 
-    getAllEmpty() {
-        let empty = new Array()
-        for (let i = 0; i < 9; i++) {
-            const square = this.getSquare(i)
-            for (let j = 0; j < square.length; j++) {
-                const field = square[j]
-                if (field == null || field.value == null || field.value == '' || !VALID.includes(field.value)) {
-                    empty.push(field)
-                }
-            }
-        }
-        return empty
-    }
+	setSquare(index, fields) {
+		if (index < 0 || index >= 9 || fields == null || fields.length != 9) {
+			throw new Error('the parameters of [field.js::setSquare] are wrong [' + index + '][' + fields + ']')
+		}
+		var square = this.getSquare(index)
+		for (let i = 0; i < 9; i++) {
+			this.set(square[i].rowIndex, square[i].columnIndex, fields[i])
+		}
+	}
 
-    getAnyEmpty() {
-        const empty = this.getAllEmpty()
-        if (empty != null && empty.length > 0) {
-            const randomIndex = Math.floor(Math.random() * empty.length)
-            return empty[randomIndex]
-        }
-        return null
-    }
+	serialize() {
+		let serializedRows = new Array()
+		for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
+			let serializedRow = new Array()
+			const row = this.getRow(rowIndex)
+			for (let columnIndex = 0; columnIndex < row.length; columnIndex++) {
+				const value = row[columnIndex].value
+				if (value.length == 1) {
+					serializedRow[columnIndex] = value
+				} else {
+					serializedRow[columnIndex] = ''
+				}
+			}
+			serializedRows[rowIndex] = serializedRow
+		}
+		return serializedRows
+	}
 
-    serialize() {
-        let serializedRows = new Array()
-        for (let i = 0; i < 9; i++) {
-            let serializedRow = new Array()
-            const row = this.getRow(i)
-            for (let j = 0; j < row.length; j++) {
-                const v = row[j].value
-                if (v.length == 1) {
-                    serializedRow[j] = v
-                } else {
-                    serializedRow[j] = ''
-                }
-            }
-            serializedRows[i] = serializedRow
-        }
-        return serializedRows
-    }
+	deserialize(serializedRows, useKeystrokes) {
+		for (let rowIndex = 0; rowIndex < serializedRows.length; rowIndex++) {
+			const serializedRow = serializedRows[rowIndex]
+			for (let columnIndex = 0; columnIndex < serializedRow.length; columnIndex++) {
+				if (useKeystrokes) {
+					let choice = new KeyPressEvent(this.get(rowIndex, columnIndex), serializedRow[columnIndex])
+					choice.execute()
+				} else {
+					this.setValue(rowIndex, columnIndex, serializedRow[columnIndex])
+				}
+			}
+		}
+	}
 
-    deserialize(serializedRows, useKeystrokes) {
-        for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
-            let row = this.getRow(rowIndex)
-            const serializedRow = serializedRows[rowIndex]
-            for (let columnIndex = 0; columnIndex < serializedRow.length; columnIndex++) {
-                if (useKeystrokes) {
-                    let choice = new KeyPressEvent(row[columnIndex], serializedRow[columnIndex])
-                    choice.execute()
-                } else {
-                    row[columnIndex].value = serializedRow[columnIndex]
-                }
-            }
-        }
-    }
+	deserializeGeneratedField(serializedRows) {
+		this.deserialize(serializedRows, false)
+	}
 
-    deserializeGeneratedField(serializedRows) {
-        this.deserialize(serializedRows, false)
-    }
+	deserializeSolution(serializedRows) {
+		this.deserialize(serializedRows, true)
+	}
 
-    deserializeSolution(serializedRows) {
-        this.deserialize(serializedRows, true)
-    }
+	isSolved() {
+		const emptyFields = this.getAllEmptyFields()
+		if (emptyFields.length > 0) {
+			return false
+		}
+		const mistakes = this.getMistakes()
+		if (mistakes.length > 0) {
+			return false
+		}
+		return true
+	}
 
-    print() {
-        console.log('printing ...')
-        for (let i = 0; i < 9; i++) {
-            console.log('square #' + i)
-            const square = this.getSquare(i)
-            for (let j = 0; j < square.length; j++) {
-                const field = square[j]
-                console.log(field)
-            }
-        }
-    }
+	getAllEmptyFields() {
+		let emptyFields = new Array()
+		for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
+			for (let columnIndex = 0; columnIndex < 9; columnIndex++) {
+				const field = this.get(rowIndex, columnIndex)
+				if (field == null || field.value == null || field.value == '' || field.value == '0') {
+					emptyFields.push(field)
+				}
+			}
+		}
+		return emptyFields
+	}
 
+	getAllFilledFields() {
+		let filledFields = new Array()
+		for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
+			for (let columnIndex = 0; columnIndex < 9; columnIndex++) {
+				const field = this.get(rowIndex, columnIndex)
+				if (field != null && field.value != null && field.value != '' && field.value != '0') {
+					filledFields.push(field)
+				}
+			}
+		}
+		return filledFields
+	}
+
+	getMistakes() {
+		var mistakes = new Array()
+		for (let i = 0; i < 9; i++) {
+			const square = this.getSquare(i)
+			if (!this.isValid(square)) {
+				mistakes.push('square #' + (i + 1) + ' is invalid!')
+			}
+			const row = this.getRow(i)
+			if (!this.isValid(row)) {
+				mistakes.push('row #' + (i + 1) + ' is invalid!')
+			}
+			const column = this.getColumn(i)
+			if (!this.isValid(column)) {
+				mistakes.push('column #' + (i + 1) + ' is invalid!')
+			}
+		}
+		return mistakes
+	}
+
+	isValid(array) {
+		if (array == null || array.length != 9) {
+			return false
+		}
+		for (let i = 0; i < array.length; i++) {
+			const input = array[i]
+			if (input == null || input.value == null) {
+				return false
+			}
+			if (input.value == '' || input.value.length > 1) {
+				continue
+			}
+			if (!VALID.includes(input.value)) {
+				return false
+			}
+			for (let j = i + 1; j < array.length; j++) {
+				const otherInput = array[j];
+				if (input.value == otherInput.value) {
+					return false
+				}
+			}
+		}
+		return true
+	}
+
+	getPossibleValues(rowIndex, columnIndex) {
+		const row = this.getRow(rowIndex)
+		const column = this.getColumn(columnIndex)
+		const square = this.getSquare(this.getSquareIndex(rowIndex, columnIndex))
+		let possibleValues = new Array()
+		for (let i = 1; i <= 9; i++) {
+			if (this.includes(row, i)) {
+				continue
+			}
+			if (this.includes(column, i)) {
+				continue
+			}
+			if (this.includes(square, i)) {
+				continue
+			}
+			possibleValues.push(i.toString())
+		}
+		return possibleValues
+	}
+
+	getSquareIndex(rowIndex, columnIndex) {
+		return Math.floor(rowIndex / 3) * 3 + Math.floor(columnIndex / 3)
+	}
+
+	includes(array, value) {
+		for (let i = 0; i < array.length; i++) {
+			if (array[i].value == value) {
+				return true
+			}
+		}
+		return false
+	}
+
+	clone() {
+		let clonedField = new Field()
+		for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
+			const row = this.getRow(rowIndex)
+			for (let columnIndex = 0; columnIndex < row.length; columnIndex++) {
+				clonedField.setValue(rowIndex, columnIndex, this.getValue(rowIndex, columnIndex))
+			}
+		}
+		return clonedField
+	}
+
+	toString() {
+		let s = ''
+		for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
+			for (let columnIndex = 0; columnIndex < 9; columnIndex++) {
+				s += this.getValue(rowIndex, columnIndex) + '\t'
+			}
+			s += '\n'
+		}
+		return s
+	}
 }
 
-var field = new Field()
+function asStringsArray(array) {
+	var stringsArray = new Array()
+	for (let i = 0; i < array.length; i++) {
+		stringsArray.push(array[i].toString())
+	}
+	return stringsArray
+}

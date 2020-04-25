@@ -1,6 +1,4 @@
-window.onload = init
-
-function init() {
+window.onload = function () {
     console.log('initializing ...')
     enableInputs(false)
     initCircles()

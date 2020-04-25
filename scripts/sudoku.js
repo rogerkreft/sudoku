@@ -1,3 +1,5 @@
+var field = new Field()
+
 function initSudoku() {
     try {
         var squares = document.querySelectorAll('.sudoku>.square')
@@ -9,7 +11,7 @@ function initSudoku() {
                 input.addEventListener('keyup', e => validateInput(e, keyUp))
                 input.addEventListener('input', inputChanged)
             }
-            field.insertSquare(i, inputs)
+            field.setSquare(i, inputs)
         }
     } catch (err) {
         console.log('ERROR initializing sudoku:', err)
@@ -18,7 +20,7 @@ function initSudoku() {
 
 function check() {
     const mistakes = field.getMistakes()
-    const emptyFields = field.getAllEmpty()
+    const emptyFields = field.getAllEmptyFields()
     if (mistakes.length > 0) {
         let msg = 'The sudoku is invalid because:\n'
         for (let i = 0; i < mistakes.length; i++) {

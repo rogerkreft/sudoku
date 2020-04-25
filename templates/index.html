@@ -2,139 +2,140 @@
 <html lang="en">
 
 <head>
-    <title>sudoku</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/mq-800-plus.css" media="(min-width:800px)">
-    <link rel="stylesheet" href="/css/mq-1200-plus.css" media="(min-width:1200px)">
-    <script type="text/javascript" src="/scripts/init.js"></script>
-    <script type="text/javascript" src="/scripts/circles.js"></script>
-    <script type="text/javascript" src="/scripts/inputs.js"></script>
-    <script type="text/javascript" src="/scripts/field.js"></script>
-    <script type="text/javascript" src="/scripts/sudoku.js"></script>
+	<title>sudoku</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="/css/main.css">
+	<link rel="stylesheet" href="/css/mq-800-plus.css" media="(min-width:800px)">
+	<link rel="stylesheet" href="/css/mq-1200-plus.css" media="(min-width:1200px)">
+	<script type="text/javascript" src="/scripts/misc.js"></script>
+	<script type="text/javascript" src="/scripts/init.js"></script>
+	<script type="text/javascript" src="/scripts/circles.js"></script>
+	<script type="text/javascript" src="/scripts/inputs.js"></script>
+	<script type="text/javascript" src="/scripts/field.js"></script>
+	<script type="text/javascript" src="/scripts/sudoku.js"></script>
 </head>
 
 <body>
-    <header>
-        <div class="circle"></div>
-        <div class="circle"></div>
-        <div class="circle"></div>
-        <div class="circle"></div>
-        <div class="circle"></div>
-    </header>
-    <main>
-        <div class="sudoku">
-            <div class="square">
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-            </div>
-            <div class="square">
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-            </div>
-            <div class="square">
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-            </div>
-            <div class="square">
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-            </div>
-            <div class="square">
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-            </div>
-            <div class="square">
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-            </div>
-            <div class="square">
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-            </div>
-            <div class="square">
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-            </div>
-            <div class="square">
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-                <textarea class="field"></textarea>
-            </div>
-        </div>
-        <div class="buttons">
-            <button onclick="check()">check</button>
-            <button onclick="undo()">undo</button>
-            <button onclick="lockGUI(solve)">solve</button>
-            <button onclick="lockGUI(count)">count</button>
-            <button onclick="restart()">restart</button>
-            <button disabled>difficulty</button>
-            <button onclick="lockGUI(generate)">generate</button>
-        </div>
-    </main>
+	<header>
+		<div class="circle"></div>
+		<div class="circle"></div>
+		<div class="circle"></div>
+		<div class="circle"></div>
+		<div class="circle"></div>
+	</header>
+	<main>
+		<div class="sudoku">
+			<div class="square">
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+			</div>
+			<div class="square">
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+			</div>
+			<div class="square">
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+			</div>
+			<div class="square">
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+			</div>
+			<div class="square">
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+			</div>
+			<div class="square">
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+			</div>
+			<div class="square">
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+			</div>
+			<div class="square">
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+			</div>
+			<div class="square">
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+				<textarea class="field"></textarea>
+			</div>
+		</div>
+		<div class="buttons">
+			<button onclick="check()">check</button>
+			<button onclick="undo()">undo</button>
+			<button onclick="lockGUI(solve)">solve</button>
+			<button onclick="lockGUI(count)">count</button>
+			<button onclick="restart()">restart</button>
+			<button disabled>difficulty</button>
+			<button onclick="lockGUI(generate)">generate</button>
+		</div>
+	</main>
 </body>
 
 </html>

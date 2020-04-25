@@ -1,5 +1,3 @@
-const VALID = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
-
 class Inputs {
 
     constructor() {
@@ -90,13 +88,14 @@ function keyUp(e) {
 function inputChanged(e) {
     const field = e.target
     const cursorPos = field.selectionStart
-    const trimmed = field.value.replace(/\n| |/g, '')
+    const trimmed = field.value.replace(/\n| /g, '')
     if (trimmed.length > 1) {
         field.classList.add('small')
         s = ''
-        for (let i = 0; i < VALID.length; i++) {
-            if (field.value.includes(VALID[i])) {
-                s += VALID[i]
+        var iterations = 0
+        for (let i = 0, index = 6; i < 9; i++, index = getNextIteration(index)) {
+            if (field.value.includes(VALID[index])) {
+                s += VALID[index]
             } else {
                 s += ' '
             }
@@ -111,4 +110,13 @@ function inputChanged(e) {
         field.classList.remove("small")
         field.value = trimmed
     }
+}
+
+function getNextIteration(i) {
+    if (i == 8) {
+        return 3
+    } else if (i == 5) {
+        return 0
+    }
+    return ++i
 }
