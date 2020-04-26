@@ -23,8 +23,8 @@ class Field {
 		return this.rows[rowIndex][columnIndex].value
 	}
 
-	setValue(rowIndex, columnIndex, v) {
-		let newValue = v
+	setValue(rowIndex, columnIndex, value) {
+		let newValue = value
 		if (newValue == null || newValue == undefined) {
 			newValue = ''
 		}
@@ -32,7 +32,7 @@ class Field {
 		if (newValue != '' && !VALID.includes(newValue)) {
 			throw new Error('ERROR: trying to set [' + rowIndex + ',' + columnIndex + '] to illegal value [' + newValue + '] in \n' + this.toString())
 		}
-		this.get(rowIndex, columnIndex).value = v
+		this.get(rowIndex, columnIndex).value = value
 	}
 
 	getRow(rowIndex) {

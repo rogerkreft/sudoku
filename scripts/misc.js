@@ -9,3 +9,21 @@ function shuffle(array) {
     }
     return array
 }
+
+function sleep(delayInSeconds) {
+    var start = new Date().getTime()
+    while (new Date().getTime() < start + delayInSeconds * 1000) { }
+}
+
+function isSerializedSudokuField(object) {
+    if (object == null || !(object instanceof Array) || object.length != 9) {
+        return false
+    }
+    for (let i = 0; i < object.length; i++) {
+        const row = object[i]
+        if (row == null || !(row instanceof Array) || row.length != 9) {
+            return false
+        }
+    }
+    return true
+}
