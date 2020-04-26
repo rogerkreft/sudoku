@@ -92,7 +92,6 @@ function inputChanged(e) {
     if (trimmed.length > 1) {
         field.classList.add('small')
         s = ''
-        var iterations = 0
         for (let i = 0, index = 6; i < 9; i++, index = getNextIteration(index)) {
             if (field.value.includes(VALID[index])) {
                 s += VALID[index]
