@@ -133,30 +133,36 @@ class Field {
 		return fields
 	}
 
-	getAllEmptyFields() {
+	getAllEmptyFieldsStartingAt(index) {
 		let emptyFields = new Array()
-		for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
-			for (let columnIndex = 0; columnIndex < 9; columnIndex++) {
-				const field = this.get(rowIndex, columnIndex)
-				if (field == null || field.value == null || field.value == '' || field.value == '0') {
-					emptyFields.push(field)
-				}
+		let fields = this.getAllFields()
+		for (let i = index; i < fields.length; i++) {
+			const field = fields[i]
+			if (field == null || field.value == null || field.value == '' || field.value == '0') {
+				emptyFields.push(field)
 			}
 		}
 		return emptyFields
 	}
 
-	getAllFilledFields() {
+	getAllEmptyFields() {
+		return this.getAllEmptyFieldsStartingAt(0)
+	}
+
+	getAllFilledFieldsStartingAt(index) {
 		let filledFields = new Array()
-		for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
-			for (let columnIndex = 0; columnIndex < 9; columnIndex++) {
-				const field = this.get(rowIndex, columnIndex)
-				if (field != null && field.value != null && field.value != '' && field.value != '0') {
-					filledFields.push(field)
-				}
+		let fields = this.getAllFields()
+		for (let i = index; i < fields.length; i++) {
+			const field = fields[i]
+			if (field != null && field.value != null && field.value != '' && field.value != '0') {
+				filledFields.push(field)
 			}
 		}
 		return filledFields
+	}
+
+	getAllFilledFields() {
+		return this.getAllFilledFieldsStartingAt(0)
 	}
 
 	getMistakes() {
