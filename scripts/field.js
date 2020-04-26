@@ -123,6 +123,16 @@ class Field {
 		return true
 	}
 
+	getAllFields() {
+		let fields = new Array()
+		for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
+			for (let columnIndex = 0; columnIndex < 9; columnIndex++) {
+				fields.push(this.get(rowIndex, columnIndex))
+			}
+		}
+		return fields
+	}
+
 	getAllEmptyFields() {
 		let emptyFields = new Array()
 		for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
