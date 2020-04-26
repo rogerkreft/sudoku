@@ -133,10 +133,10 @@ class Field {
 		return fields
 	}
 
-	getAllEmptyFieldsStartingAt(index) {
+	getAllEmptyFields() {
 		let emptyFields = new Array()
 		let fields = this.getAllFields()
-		for (let i = index; i < fields.length; i++) {
+		for (let i = 0; i < fields.length; i++) {
 			const field = fields[i]
 			if (field == null || field.value == null || field.value == '' || field.value == '0') {
 				emptyFields.push(field)
@@ -145,24 +145,40 @@ class Field {
 		return emptyFields
 	}
 
-	getAllEmptyFields() {
-		return this.getAllEmptyFieldsStartingAt(0)
+	getAnyEmptyField() {
+		const fields = this.getAllEmptyFields()
+		return fields[Math.floor(Math.random() * fields.length)]
 	}
 
-	getAllFilledFieldsStartingAt(index) {
+	getNextEmptyField() {
+		const emptyFields = this.getAllEmptyFields()
+		let nextEmptyField = emptyFields[0]
+		let minPossibilities = this.getPossibleValues(nextEmptyField.rowIndex, nextEmptyField.columnIndex)
+		for (let i = 1; i < emptyFields.length; i++) {
+			const possibleValues = this.getPossibleValues(emptyFields[i].rowIndex, emptyFields[i].columnIndex)
+			if (possibleValues.length == 0) {
+				nextEmptyField = emptyFields[i]
+				minPossibilities = possibleValues
+				break
+			}
+			if (possibleValues.length < minPossibilities.length) {
+				nextEmptyField = emptyFields[i]
+				minPossibilities = possibleValues
+			}
+		}
+		return { field: nextEmptyField, possibleValues: minPossibilities }
+	}
+
+	getAllFilledFields() {
 		let filledFields = new Array()
 		let fields = this.getAllFields()
-		for (let i = index; i < fields.length; i++) {
+		for (let i = 0; i < fields.length; i++) {
 			const field = fields[i]
 			if (field != null && field.value != null && field.value != '' && field.value != '0') {
 				filledFields.push(field)
 			}
 		}
 		return filledFields
-	}
-
-	getAllFilledFields() {
-		return this.getAllFilledFieldsStartingAt(0)
 	}
 
 	getMistakes() {

@@ -3,13 +3,11 @@ importScripts('field.js')
 
 var feedbackFunction = function () { return false }
 var field
-var fields
 var solutions
 var done
 
 function reset() {
 	field = new Field()
-	fields = new Array()
 	solutions = new Array()
 	done = false
 }
@@ -22,7 +20,10 @@ onmessage = function (e) {
 	} else if (data == 'COUNT') {
 		feedbackFunction = count
 	} else if (data == 'GENERATE') {
+		const start = new Date().getTime()
 		postMessage(generate())
+		const duration = (new Date().getTime() - start) / 1000
+		console.log('generated a sudoku with a unique solution in', duration, 'seconds')
 	} else {
 		try {
 			generateSolutions(data)
@@ -43,6 +44,11 @@ onmessage = function (e) {
 function getAnySolution() {
 	if (solutions.length > 0) {
 		postMessage(solutions[0].serialize())
+		feedbackFunction = function () { return true }
+		return true
+	}
+	if (done) {
+		postMessage('ERROR: sudoku is not solvable!')
 		feedbackFunction = function () { return true }
 		return true
 	}
@@ -75,23 +81,23 @@ function solve() {
 	if (feedbackFunction()) {
 		return false
 	}
-	const emptyFields = field.getAllEmptyFields()
-	for (let i = 0; i < emptyFields.length; i++) {
-		const emptyField = emptyFields[i]
-		const possibleValues = field.getPossibleValues(emptyField.rowIndex, emptyField.columnIndex)
-		if (possibleValues.length == 0) {
-			return false
-		}
-		for (let v = 0; v < possibleValues.length; v++) {
-			emptyField.value = possibleValues[v]
-			solve()
-		}
-		emptyField.value = ''
-		if (asStringsArray(fields).includes(field.toString())) {
-			return false
-		}
-		fields.push(field)
+	const nextEmptyField = field.getNextEmptyField()
+	if (nextEmptyField == null) {
+		return false
 	}
+	const emptyField = nextEmptyField.field
+	if (emptyField == null) {
+		return false
+	}
+	const possibleValues = nextEmptyField.possibleValues
+	if (possibleValues == null || possibleValues.length == 0) {
+		return false
+	}
+	for (let v = 0; v < possibleValues.length; v++) {
+		emptyField.value = possibleValues[v]
+		solve()
+	}
+	emptyField.value = ''
 	return false
 }
 
@@ -107,10 +113,10 @@ function generate() {
 	let generatedField = getRandomInitialField()
 	feedbackFunction = abortOnMoreThanOneSolution
 	console.log('removing fields as long as there is only a single possible solution')
-	while (solutions.length == 1) {
+	while (true) {
 		let filledFields = shuffle(generatedField.getAllFilledFields())
 		let filledFieldCount = filledFields.length
-		for (let i = 0; i < filledFields.length; i++) {
+		for (let i = 0; i < filledFieldCount; i++) {
 			const field = filledFields[i]
 			const oldValue = field.value
 			field.value = ''
